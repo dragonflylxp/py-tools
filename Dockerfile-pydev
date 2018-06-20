@@ -1,0 +1,43 @@
+#选择centos7为基础镜像 
+FROM centos 
+
+#维护信息
+MAINTAINER lixiaopeng dragonflylxp@gmail.com 
+
+#设置时区
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
+
+#创建基础目录并设置工作目录
+RUN mkdir -p /data/var/log
+RUN mkdir -p /home/service
+WORKDIR /home/service
+
+#环境变量设置
+ENV PYCURL_SSL_LIBRARY=nss
+
+#安装必要的yum包
+RUN yum install -y mysql-devel libcurl-devel libxslt-devel fontconfig-devel python-devel gcc git make 
+RUN yum install -y epel-release 
+RUN yum install -y python-pip
+
+#安装pyenv
+RUN git clone https://github.com/yyuu/pyenv.git /home/service/.pyenv  
+ENV PYENV_ROOT="/home/service/.pyenv"  
+ENV PATH="$PYENV_ROOT/bin:$PATH"
+RUN eval "$(pyenv init -)"
+
+#安装python3.6
+RUN pyenv install -v 3.6.4
+RUN pyenv global 3.6.4 
+
+#安装python包
+COPY ./requirements-3.6.txt /home/service/requirements.txt
+RUN /home/service/.pyenv/shims/pip install --upgrade pip 
+RUN /home/service/.pyenv/shims/pip install -r /home/service/requirements.txt 
+
+#暴露端口
+EXPOSE 3333 4444 10002 
+
+#启动supervisor(python>=2.4 <3.x)
+RUN /usr/bin/pip install supervisor
+CMD ["/usr/bin/supervisord","-n", "-c","/home/service/etc/supervisord.conf"]
