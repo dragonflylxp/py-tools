@@ -1,0 +1,23 @@
+version: "3"
+services:
+    nginx:  
+        image: nginx
+        container_name: ngx_wp 
+        volumes:
+          -  /root/etc/nginx:/etc/nginx
+          -  /root/log/nginx:/var/log/nginx/
+        ports:
+          - 80:80
+    mysql:
+        image: mariadb 
+        container_name: mysql_wp
+        ports:
+          - 3306:3306
+        volumes:
+          -  /root/etc/mysql:/etc/mysql
+          -  /root/data/mysql:/var/lib/mysql
+          -  /root/log/mysql:/var/log/mysql
+        environment: 
+          - TZ=Asia/Shanghai
+          - LANG=C.UTF-8
+          - MYSQL_ROOT_PASSWORD=123456
