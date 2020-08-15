@@ -13,6 +13,9 @@ yum install -y yum-utils device-mapper-persistent-data lvm2
 echo '>>>[INSTALL DOCKER]Add docker yum repo'
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
+echo '>>>[INSTALL DOCKER]Install containerd.io'
+yum install https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm
+
 echo '>>>[INSTALL DOCKER]Install docker-ce'
 yum install -y docker-ce
 
